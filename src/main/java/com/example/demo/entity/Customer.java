@@ -1,0 +1,24 @@
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "customer")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Customer extends BaseEntity {
+    @Column(nullable = false)
+    private String firstName;
+    @Column(nullable = false)
+    private String lastName;
+    @OneToOne
+    private Address address;
+    @OneToOne
+    private Account account;
+}

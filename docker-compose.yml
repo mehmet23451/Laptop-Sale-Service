@@ -1,0 +1,28 @@
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: demo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secretpassword
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d demo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  spring-app:
+    build: .
+    container_name: demo-container
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: secretpassword
+    depends_on:
+      postgres-db:
+        condition: service_healthy
