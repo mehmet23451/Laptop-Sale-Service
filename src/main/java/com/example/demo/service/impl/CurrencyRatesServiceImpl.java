@@ -5,6 +5,7 @@
         import com.example.demo.exception.ErrorMessage;
         import com.example.demo.exception.MessageType;
         import com.example.demo.service.CurrencyRatesService;
+        import org.springframework.beans.factory.annotation.Value;
         import org.springframework.core.ParameterizedTypeReference;
         import org.springframework.http.HttpEntity;
         import org.springframework.http.HttpMethod;
@@ -16,6 +17,8 @@
 
         @Service
         public class CurrencyRatesServiceImpl implements CurrencyRatesService {
+            @Value("${tcmb.api.key}")
+            private String tcmbApiKey;
             @Override
             public CurrencyRatesResponse getCurrencyRates(String startDate, String endDate) {
                 String rootURL = "https://evds2.tcmb.gov.tr/service/evds/";
@@ -25,8 +28,9 @@
                 String endpoint = rootURL + "series=" + series + "&startDate=" + startDate + "&endDate=" + endDate + "&type="
                         + type;
 
+
                 HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.set("key", "XsBxAxzaVo");
+                httpHeaders.set("key", tcmbApiKey);
 
                 HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
 

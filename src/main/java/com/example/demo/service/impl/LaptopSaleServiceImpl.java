@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Service
@@ -24,13 +26,14 @@ public class LaptopSaleServiceImpl implements LaptopSaleService {
     private final CurrencyRatesService currencyRatesService;
     private final SoldLaptopRepository soldLaptopRepository;
     private final SellerRepository sellerRepository;
-
-    public LaptopSaleServiceImpl(LaptopRepository laptopRepository, CustomerRepository customerRepository, CurrencyRatesService currencyRatesService, SoldLaptopRepository soldLaptopRepository, SellerRepository sellerRepository) {
+    private final SellerLaptopRepository sellerLaptopRepository;
+    public LaptopSaleServiceImpl(LaptopRepository laptopRepository, CustomerRepository customerRepository, CurrencyRatesService currencyRatesService, SoldLaptopRepository soldLaptopRepository, SellerRepository sellerRepository, SellerLaptopRepository sellerLaptopRepository) {
         this.laptopRepository = laptopRepository;
         this.customerRepository = customerRepository;
         this.currencyRatesService = currencyRatesService;
         this.soldLaptopRepository = soldLaptopRepository;
         this.sellerRepository = sellerRepository;
+        this.sellerLaptopRepository=sellerLaptopRepository;
     }
 
 
@@ -45,6 +48,10 @@ public class LaptopSaleServiceImpl implements LaptopSaleService {
         return formatter.format(date);
     }
     public BigDecimal convertToTL(BigDecimal priceInUsd){
+        DayOfWeek dayOfWeek= LocalDate.now().getDayOfWeek();
+        if (dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY)){
+            throw new BaseException(new ErrorMessage(MessageType.CONVERT_FAILED,null));
+        }
         BigDecimal usd=new BigDecimal(currencyRatesService.getCurrencyRates( convertDate(new Date()) ,convertDate(new Date())).getItems().get(0).getUsd());
         return usd.multiply(priceInUsd);
     }
@@ -100,6 +107,13 @@ public class LaptopSaleServiceImpl implements LaptopSaleService {
         if (!isAmountEnough(customer,sellingPrice)){
             throw new BaseException(new ErrorMessage(MessageType.CUSTOMER_AMOUNT_IS_NOT_ENOUGH,null));
         }
+        // laptop gerçekten satıcının olup olmama kontrolü
+
+        if (!sellerLaptopRepository.existsBySellerAndLaptop(seller,laptop)){
+            throw new BaseException(new ErrorMessage(MessageType.SELLER_AND_LAPTOP_NOT_VALID,null));
+        }
+
+
         // yeni bir kayıt oluşturacağız,
         SoldLaptop soldLaptop=soldLaptopRepository.save(createSoldLaptop(customer,seller,laptop));
         //bütün değişiklikleri uygulayacağız.

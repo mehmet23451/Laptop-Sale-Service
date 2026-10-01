@@ -15,6 +15,8 @@ public enum MessageType {
     LAPTOP_NOT_FOUND("1013","laptop bulunamadı"),
     CUSTOMER_NOT_FOUND("1014","müşteri bulunamadı"),
     SELLER_NOT_FOUND("1015","satıcı bulunamadı"),
+    CONVERT_FAILED("1016","haftasonu olduğu için kur çekilemiyor"),
+    SELLER_AND_LAPTOP_NOT_VALID("1017", "satıcının böyle bir laptopu yok"),
     GENERAL_EXCEPTION("9999" , "genel bir hata oluştu");
 
 
