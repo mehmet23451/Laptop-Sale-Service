@@ -51,11 +51,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return refreshToken;
     }
     public DtoUser register(AuthRequest authRequest){
-            User user= userRepository.save(createUser(authRequest));
-            DtoUser dtoUser=new DtoUser();
-            BeanUtils.copyProperties(user,dtoUser);
-            System.out.println("Kullanıcı başarılı bir şekilde oluşturuldu. İsim: "+user.getUsername());
-            return dtoUser;
+        User user = createUser(authRequest);
+        DtoUser dtoUser = new DtoUser();
+        BeanUtils.copyProperties(user, dtoUser);
+        return dtoUser;
     }
     public boolean isValidRefreshToken(RefreshToken refreshToken){
         return refreshToken.getExpiredDate().after(new Date());

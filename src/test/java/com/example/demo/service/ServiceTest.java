@@ -7,10 +7,7 @@ import com.example.demo.dto.models.DtoSoldLaptopIU;
 import com.example.demo.entity.*;
 import com.example.demo.entity.enums.LaptopStatus;
 import com.example.demo.exception.BaseException;
-import com.example.demo.repo.CustomerRepository;
-import com.example.demo.repo.LaptopRepository;
-import com.example.demo.repo.SellerRepository;
-import com.example.demo.repo.SoldLaptopRepository;
+import com.example.demo.repo.*;
 import com.example.demo.service.impl.LaptopSaleServiceImpl;
 import net.bytebuddy.NamingStrategy;
 import org.aspectj.lang.annotation.Before;
@@ -45,6 +42,8 @@ public class ServiceTest
     private  SoldLaptopRepository soldLaptopRepository;
     @Mock
     private  SellerRepository sellerRepository;
+    @Mock
+    private SellerLaptopRepository sellerLaptopRepository;
     @InjectMocks
     private LaptopSaleServiceImpl laptopSaleService;
 
@@ -91,6 +90,7 @@ public class ServiceTest
         when(currencyRatesService.getCurrencyRates(anyString(), anyString())).thenReturn(currencyResponse);
         when(soldLaptopRepository.save(any(SoldLaptop.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+        when(sellerLaptopRepository.existsBySellerAndLaptop(seller,laptop)).thenReturn(true);
 
         DtoSoldLaptop result = laptopSaleService.sellLaptop(requestDto);
 
