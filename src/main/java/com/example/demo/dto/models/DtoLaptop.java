@@ -6,12 +6,13 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-
+@SuperBuilder
 public class DtoLaptop extends DtoBase {
     private LaptopModel laptopModel;
     private RamOption ramOption;

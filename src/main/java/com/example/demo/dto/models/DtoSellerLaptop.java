@@ -7,10 +7,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-
+@SuperBuilder
 public class DtoSellerLaptop extends DtoBase {
 
     private DtoSeller seller;

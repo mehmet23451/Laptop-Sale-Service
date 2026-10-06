@@ -10,7 +10,6 @@ import com.example.demo.repo.*;
 import com.example.demo.service.CurrencyRatesService;
 import com.example.demo.service.LaptopSaleService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -56,11 +55,11 @@ public class LaptopSaleServiceImpl implements LaptopSaleService {
         return usd.multiply(priceInUsd);
     }
     private SoldLaptop createSoldLaptop(Customer customer,Seller seller,Laptop laptop){
-        SoldLaptop soldLaptop= new SoldLaptop();
-        soldLaptop.setLaptop(laptop);
-        soldLaptop.setCustomer(customer);
-        soldLaptop.setSeller(seller);
-        return soldLaptop;
+        return SoldLaptop.builder()
+                .laptop(laptop)
+                .customer(customer)
+                .seller(seller)
+                .build();
     }
     public void executeAllChanges(SoldLaptop soldLaptop,BigDecimal sellingPrice){
         soldLaptop.getCustomer().getAccount().setAmount(soldLaptop.getCustomer().getAccount().getAmount().subtract(sellingPrice));
@@ -71,19 +70,74 @@ public class LaptopSaleServiceImpl implements LaptopSaleService {
         laptopRepository.save(soldLaptop.getLaptop());
     }
     public DtoSoldLaptop toDTO(SoldLaptop soldLaptop){
-        DtoSoldLaptop dtoSoldLaptop=new DtoSoldLaptop();
-        DtoCustomer dtoCustomer=new DtoCustomer();
-        DtoSeller dtoSeller= new DtoSeller();
-        DtoLaptop dtoLaptop= new DtoLaptop();
-        BeanUtils.copyProperties(soldLaptop,dtoSoldLaptop);
-        BeanUtils.copyProperties(soldLaptop.getCustomer(),dtoCustomer);
-        BeanUtils.copyProperties(soldLaptop.getSeller(),dtoSeller);
-        BeanUtils.copyProperties(soldLaptop.getLaptop(),dtoLaptop);
-        dtoSoldLaptop.setCustomer(dtoCustomer);
-        dtoSoldLaptop.setSeller(dtoSeller);
-        dtoSoldLaptop.setLaptop(dtoLaptop);
-        return dtoSoldLaptop;
+        if (soldLaptop==null) return null;
+        return DtoSoldLaptop.builder()
+                .id(soldLaptop.getId())
+                .createTime(soldLaptop.getCreateTime())
+                .laptop(laptopToDTO(soldLaptop.getLaptop()))
+                .customer(customerToDTO(soldLaptop.getCustomer()))
+                .seller(sellerToDTO(soldLaptop.getSeller()))
+                .build();
 
+    }
+    public DtoLaptop laptopToDTO(Laptop laptop){
+        if (laptop==null) return null;
+        return DtoLaptop.builder()
+                .id(laptop.getId())
+                .createTime(laptop.getCreateTime())
+                .laptopModel(laptop.getLaptopModel())
+                .laptopStatus(laptop.getLaptopStatus())
+                .color(laptop.getColor())
+                .condition(laptop.getCondition())
+                .price(laptop.getPrice())
+                .productionYear(laptop.getProductionYear())
+                .ramOption(laptop.getRamOption())
+                .storageOption(laptop.getStorageOption())
+                .build();
+    }
+    public DtoSeller sellerToDTO(Seller seller){
+        if (seller==null) return null;
+        return DtoSeller.builder()
+                .id(seller.getId())
+                .createTime(seller.getCreateTime())
+                .address(addressToDTO(seller.getAddress()))
+                .account(accountToDTO(seller.getAccount()))
+                .firstName(seller.getFirstName())
+                .lastName(seller.getLastName())
+                .build();
+    }
+    public DtoCustomer customerToDTO(Customer customer){
+        if (customer==null) return null;
+        return DtoCustomer.builder()
+                .id(customer.getId())
+                .createTime(customer.getCreateTime())
+                .account(accountToDTO(customer.getAccount()))
+                .address(addressToDTO(customer.getAddress()))
+                .firstName(customer.getFirstName())
+                .lastName(customer.getLastName())
+                .build();
+    }
+    public DtoAccount accountToDTO(Account account){
+        if (account==null) return null;
+        return DtoAccount.builder()
+                .id(account.getId())
+                .createTime(account.getCreateTime())
+                .accountNo(account.getAccountNo())
+                .iban(account.getIban())
+                .amount(account.getAmount())
+                .build();
+
+    }
+    public DtoAddress addressToDTO(Address address){
+        if (address==null) return null;
+        return DtoAddress.builder()
+                .id(address.getId())
+                .createTime(address.getCreateTime())
+                .city(address.getCity())
+                .district(address.getDistrict())
+                .neighborhood(address.getNeighborhood())
+                .street(address.getStreet())
+                .build();
     }
     @Override
     @Transactional

@@ -36,11 +36,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private UserRepository userRepository;
     public User createUser(AuthRequest authRequest) {
-        User user= new User();
-        user.setPassword(passwordEncoder.encode(authRequest.getPassword()));
-        user.setUsername(authRequest.getUsername());
-        user.setCreateTime(new Date());
-        return userRepository.save(user);
+        return userRepository.save(User.builder()
+                .password(passwordEncoder.encode(authRequest.getPassword()))
+                .username(authRequest.getUsername())
+                .createTime(new Date())
+                .build());
     }
     private RefreshToken createRefreshToken(User user) {
         RefreshToken refreshToken = new RefreshToken();

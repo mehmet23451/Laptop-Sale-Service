@@ -53,35 +53,35 @@ public class ServiceTest
     private DtoSoldLaptopIU requestDto;
     private CurrencyRatesResponse currencyResponse;
     @BeforeEach
-    void setUp(){
-        Account customerAccount = new Account();
-        customerAccount.setAmount(new BigDecimal("50000.00"));
-        customer = new Customer();
-        customer.setId(1L);
-        customer.setAccount(customerAccount);
+        void setUp(){
+            Account customerAccount = new Account();
+            customerAccount.setAmount(new BigDecimal("50000.00"));
+            customer = new Customer();
+            customer.setId(1L);
+            customer.setAccount(customerAccount);
 
-        Account sellerAccount = new Account();
-        sellerAccount.setAmount(new BigDecimal("10000.00"));
-        seller = new Seller();
-        seller.setId(2L);
-        seller.setAccount(sellerAccount);
+            Account sellerAccount = new Account();
+            sellerAccount.setAmount(new BigDecimal("10000.00"));
+            seller = new Seller();
+            seller.setId(2L);
+            seller.setAccount(sellerAccount);
 
-        laptop = new Laptop();
-        laptop.setId(3L);
-        laptop.setPrice(new BigDecimal("1000.00"));
-        laptop.setLaptopStatus(LaptopStatus.NOT_SOLD);
+            laptop = new Laptop();
+            laptop.setId(3L);
+            laptop.setPrice(new BigDecimal("1000.00"));
+            laptop.setLaptopStatus(LaptopStatus.NOT_SOLD);
 
-        requestDto = new DtoSoldLaptopIU();
-        requestDto.setCustomerId(1L);
-        requestDto.setSellerId(2L);
-        requestDto.setLaptopId(3L);
+            requestDto = new DtoSoldLaptopIU();
+            requestDto.setCustomerId(1L);
+            requestDto.setSellerId(2L);
+            requestDto.setLaptopId(3L);
 
-        CurrencyRatesItems item = new CurrencyRatesItems();
-        item.setUsd("30.00");
+            CurrencyRatesItems item = new CurrencyRatesItems();
+            item.setUsd("30.00");
 
-        currencyResponse = new CurrencyRatesResponse();
-        currencyResponse.setItems(List.of(item));
-    }
+            currencyResponse = new CurrencyRatesResponse();
+            currencyResponse.setItems(List.of(item));
+        }
     @Test
     void testLaptopSaleService_Successful() {
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
